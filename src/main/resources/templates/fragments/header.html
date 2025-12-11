@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <header th:fragment="navbar">
+        <nav>
+            <a href="/" th:href="@{/}">Home</a>
+            <a href="/features" th:href="@{/features}">Features</a>
+            <a href="/users" th:href="@{/users}">Users</a>
+            <a href="/about" th:href="@{/about}">About</a>
+            <a href="/api/status" th:href="@{/api/status}">API Status</a>
+        </nav>
+    </header>
+</body>
+</html>

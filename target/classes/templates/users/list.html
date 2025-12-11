@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Users</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav th:replace="~{fragments/header :: navbar}"></nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 th:text="${title}">All Users</h1>
+            <a th:href="@{/users/new}" class="btn btn-primary">Create New User</a>
+        </div>
+
+        <div th:if="${message}" th:class="'alert alert-' + ${messageType}">
+            <span th:text="${message}">Message</span>
+        </div>
+
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="user : ${users}">
+                        <td th:text="${user.id}">1</td>
+                        <td th:text="${user.username}">Username</td>
+                        <td th:text="${user.email}">email@example.com</td>
+                        <td><span class="role-badge" th:text="${user.role}">Role</span></td>
+                        <td class="action-cell">
+                            <a th:href="@{/users/{id}(id=${user.id})}" class="btn btn-sm btn-info">View</a>
+                            <a th:href="@{/users/{id}/edit(id=${user.id})}" class="btn btn-sm btn-warning">Edit</a>
+                            <form th:action="@{/users/{id}/delete(id=${user.id})}" method="post" 
+                                  style="display:inline;" onsubmit="return confirm('Are you sure?');">
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div th:if="${#lists.isEmpty(users)}" class="empty-state">
+            <p>No users found. <a th:href="@{/users/new}">Create your first user</a></p>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

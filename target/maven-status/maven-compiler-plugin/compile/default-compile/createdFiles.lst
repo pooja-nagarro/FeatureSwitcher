@@ -1,0 +1,10 @@
+com\example\featureswitcher\controller\UserController.class
+com\example\featureswitcher\controller\FeatureRestController.class
+com\example\featureswitcher\controller\ApiController.class
+com\example\featureswitcher\controller\FeatureController.class
+com\example\featureswitcher\service\FeatureService.class
+com\example\featureswitcher\service\UserService.class
+com\example\featureswitcher\FeatureSwitcherApplication.class
+com\example\featureswitcher\model\Feature.class
+com\example\featureswitcher\controller\HomeController.class
+com\example\featureswitcher\model\User.class
