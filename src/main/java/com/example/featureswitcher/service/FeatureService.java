@@ -1,86 +1,92 @@
 package com.example.featureswitcher.service;
 
 import com.example.featureswitcher.model.Feature;
+import com.example.featureswitcher.repository.FeatureRepository;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
+@Transactional
 public class FeatureService {
     
-    private final ConcurrentHashMap<Long, Feature> features = new ConcurrentHashMap<>();
-    private final AtomicLong idCounter = new AtomicLong(1);
+    private final FeatureRepository featureRepository;
 
-    public FeatureService() {
-        // Initialize with some sample features
-        createFeature(new Feature(null, "Dark Mode", "Enable dark theme for the application", true, "UI"));
-        createFeature(new Feature(null, "Email Notifications", "Send email notifications to users", false, "Backend"));
-        createFeature(new Feature(null, "Advanced Search", "Enable advanced search capabilities", true, "Search"));
-        createFeature(new Feature(null, "Export Data", "Allow users to export their data", false, "Data"));
-        createFeature(new Feature(null, "Push Notifications", "Enable push notifications", true, "Mobile"));
+    @Autowired
+    public FeatureService(FeatureRepository featureRepository) {
+        this.featureRepository = featureRepository;
+    }
+
+    @PostConstruct
+    public void init() {
+        // Initialize with some sample features if database is empty
+        if (featureRepository.count() == 0) {
+            createFeature(new Feature(null, "Dark Mode", "Enable dark theme for the application", true, "UI"));
+            createFeature(new Feature(null, "Email Notifications", "Send email notifications to users", false, "Backend"));
+            createFeature(new Feature(null, "Advanced Search", "Enable advanced search capabilities", true, "Search"));
+            createFeature(new Feature(null, "Export Data", "Allow users to export their data", false, "Data"));
+            createFeature(new Feature(null, "Push Notifications", "Enable push notifications", true, "Mobile"));
+        }
     }
 
     public List<Feature> getAllFeatures() {
-        return new ArrayList<>(features.values());
+        return featureRepository.findAll();
     }
 
     public Optional<Feature> getFeatureById(Long id) {
-        return Optional.ofNullable(features.get(id));
+        return featureRepository.findById(id);
     }
 
     public Feature createFeature(Feature feature) {
-        Long id = idCounter.getAndIncrement();
-        feature.setId(id);
-        features.put(id, feature);
-        return feature;
+        return featureRepository.save(feature);
     }
 
     public Optional<Feature> updateFeature(Long id, Feature updatedFeature) {
-        Feature existingFeature = features.get(id);
-        if (existingFeature != null) {
+        return featureRepository.findById(id).map(existingFeature -> {
             existingFeature.setName(updatedFeature.getName());
             existingFeature.setDescription(updatedFeature.getDescription());
             existingFeature.setEnabled(updatedFeature.isEnabled());
             existingFeature.setCategory(updatedFeature.getCategory());
-            return Optional.of(existingFeature);
-        }
-        return Optional.empty();
+            return featureRepository.save(existingFeature);
+        });
     }
 
     public boolean toggleFeature(Long id) {
-        Feature feature = features.get(id);
-        if (feature != null) {
+        Optional<Feature> featureOpt = featureRepository.findById(id);
+        if (featureOpt.isPresent()) {
+            Feature feature = featureOpt.get();
             feature.setEnabled(!feature.isEnabled());
+            featureRepository.save(feature);
             return true;
         }
         return false;
     }
 
     public boolean deleteFeature(Long id) {
-        return features.remove(id) != null;
+        if (featureRepository.existsById(id)) {
+            featureRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 
     public long getEnabledFeaturesCount() {
-        return features.values().stream().filter(Feature::isEnabled).count();
+        return featureRepository.findByEnabled(true).size();
     }
 
     public long getDisabledFeaturesCount() {
-        return features.values().stream().filter(f -> !f.isEnabled()).count();
+        return featureRepository.findByEnabled(false).size();
     }
 
     public List<Feature> getFeaturesByCategory(String category) {
-        return features.values().stream()
-                .filter(f -> f.getCategory() != null && f.getCategory().equalsIgnoreCase(category))
-                .toList();
+        return featureRepository.findByCategoryIgnoreCase(category);
     }
 
     public List<Feature> getEnabledFeatures() {
-        return features.values().stream()
-                .filter(Feature::isEnabled)
-                .toList();
+        return featureRepository.findByEnabled(true);
     }
 }

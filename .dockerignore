@@ -1,0 +1,35 @@
+# Maven
+target/
+!target/feature-switcher-*.jar
+
+# IDE
+.idea/
+.vscode/
+.settings/
+*.iml
+.project
+.classpath
+
+# Database
+*.db
+*.db-journal
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Documentation
+*.md
+!README.md

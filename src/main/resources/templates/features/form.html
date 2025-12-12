@@ -78,7 +78,8 @@
         }
         
         input[type="text"],
-        textarea {
+        textarea,
+        select {
             width: 100%;
             padding: 0.8rem;
             border: 2px solid #e5e7eb;
@@ -89,7 +90,8 @@
         }
         
         input[type="text"]:focus,
-        textarea:focus {
+        textarea:focus,
+        select:focus {
             outline: none;
             border-color: #667eea;
         }
@@ -194,6 +196,20 @@
                               placeholder="Describe the feature"
                               required></textarea>
                     <div class="help-text">Explain what this feature does</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" th:field="*{category}">
+                        <option value="">-- Select Category --</option>
+                        <option value="UI">UI</option>
+                        <option value="Backend">Backend</option>
+                        <option value="Search">Search</option>
+                        <option value="Data">Data</option>
+                        <option value="Mobile">Mobile</option>
+                        <option value="Analytics">Analytics</option>
+                    </select>
+                    <div class="help-text">Optional: Categorize your feature for better organization</div>
                 </div>
                 
                 <div class="form-group">

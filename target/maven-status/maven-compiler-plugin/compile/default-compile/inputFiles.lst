@@ -6,5 +6,7 @@ C:\AI_dom\FeatureSwitcher\src\main\java\com\example\featureswitcher\controller\F
 C:\AI_dom\FeatureSwitcher\src\main\java\com\example\featureswitcher\controller\UserController.java
 C:\AI_dom\FeatureSwitcher\src\main\java\com\example\featureswitcher\FeatureSwitcherApplication.java
 C:\AI_dom\FeatureSwitcher\src\main\java\com\example\featureswitcher\model\User.java
+C:\AI_dom\FeatureSwitcher\src\main\java\com\example\featureswitcher\repository\UserRepository.java
+C:\AI_dom\FeatureSwitcher\src\main\java\com\example\featureswitcher\repository\FeatureRepository.java
 C:\AI_dom\FeatureSwitcher\src\main\java\com\example\featureswitcher\model\Feature.java
 C:\AI_dom\FeatureSwitcher\src\main\java\com\example\featureswitcher\service\UserService.java

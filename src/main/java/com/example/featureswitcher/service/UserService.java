@@ -1,61 +1,66 @@
 package com.example.featureswitcher.service;
 
 import com.example.featureswitcher.model.User;
+import com.example.featureswitcher.repository.UserRepository;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
+@Transactional
 public class UserService {
     
-    private final List<User> users = new ArrayList<>();
-    private final AtomicLong idCounter = new AtomicLong(1);
+    private final UserRepository userRepository;
 
-    public UserService() {
-        // Initialize with sample data
-        users.add(new User(idCounter.getAndIncrement(), "admin", "admin@featureswitcher.com", "Admin"));
-        users.add(new User(idCounter.getAndIncrement(), "developer", "dev@featureswitcher.com", "Developer"));
-        users.add(new User(idCounter.getAndIncrement(), "tester", "test@featureswitcher.com", "Tester"));
+    @Autowired
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @PostConstruct
+    public void init() {
+        // Initialize with sample data if database is empty
+        if (userRepository.count() == 0) {
+            userRepository.save(new User(null, "admin", "admin@featureswitcher.com", "Admin"));
+            userRepository.save(new User(null, "developer", "dev@featureswitcher.com", "Developer"));
+            userRepository.save(new User(null, "tester", "test@featureswitcher.com", "Tester"));
+        }
     }
 
     public List<User> getAllUsers() {
-        return new ArrayList<>(users);
+        return userRepository.findAll();
     }
 
     public Optional<User> getUserById(Long id) {
-        return users.stream()
-                .filter(u -> u.getId().equals(id))
-                .findFirst();
+        return userRepository.findById(id);
     }
 
     public Optional<User> getUserByUsername(String username) {
-        return users.stream()
-                .filter(u -> u.getUsername().equalsIgnoreCase(username))
-                .findFirst();
+        return userRepository.findByUsername(username);
     }
 
     public User createUser(User user) {
-        user.setId(idCounter.getAndIncrement());
-        users.add(user);
-        return user;
+        return userRepository.save(user);
     }
 
     public Optional<User> updateUser(Long id, User updatedUser) {
-        Optional<User> existingUser = getUserById(id);
-        if (existingUser.isPresent()) {
-            User user = existingUser.get();
-            user.setUsername(updatedUser.getUsername());
-            user.setEmail(updatedUser.getEmail());
-            user.setRole(updatedUser.getRole());
-            return Optional.of(user);
-        }
-        return Optional.empty();
+        return userRepository.findById(id).map(existingUser -> {
+            existingUser.setUsername(updatedUser.getUsername());
+            existingUser.setEmail(updatedUser.getEmail());
+            existingUser.setRole(updatedUser.getRole());
+            return userRepository.save(existingUser);
+        });
     }
 
     public boolean deleteUser(Long id) {
-        return users.removeIf(u -> u.getId().equals(id));
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }
