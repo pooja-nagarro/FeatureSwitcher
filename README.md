@@ -23,8 +23,9 @@ A Spring Boot web application for managing feature toggles with a complete MVC a
 
 ## Quick Start
 
-### Using Docker (Recommended)
+### Local Development with Docker (Recommended)
 
+Run the application locally in Docker container:
 ```bash
 # Build and start
 docker-compose up -d --build
@@ -38,7 +39,7 @@ docker-compose down
 
 Access at: **http://localhost:8080**
 
-### Local Development
+### Local Development without Docker
 
 ```bash
 # Build
@@ -50,6 +51,20 @@ java -jar target/feature-switcher-1.0.0.jar
 # Or with Maven
 mvn spring-boot:run
 ```
+
+### CI/CD with GitHub Actions
+
+Docker images are automatically built and pushed to GitHub Container Registry on every push to `main`:
+
+```bash
+# Pull the latest image
+docker pull ghcr.io/pooja-nagarro/featureswitcher:latest
+
+# Run the image
+docker run -d -p 8080:8080 ghcr.io/pooja-nagarro/featureswitcher:latest
+```
+
+**Workflow:** Push to `main` → Build & Test → Build Docker Image → Push to `ghcr.io`
 
 ## Application URLs
 
